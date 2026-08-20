@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mantiqiy Detektiv</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background:
+        radial-gradient(circle at top, #26344d 0%, #101522 45%, #070a10 100%);
+    color: white;
+    min-height: 100vh;
+}
+
+.container {
+    width: min(1000px, 94%);
+    margin: auto;
+    padding: 25px 0 50px;
+}
+
+/* HEADER */
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.logo {
+    font-size: 55px;
+}
+
+h1 {
+    font-size: 34px;
+    color: #f4c95d;
+    margin-top: 5px;
+}
+
+.subtitle {
+    color: #aeb8ca;
+    margin-top: 7px;
+}
+
+/* TOP BAR */
+
+.topbar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 13px;
+    border-radius: 14px;
+    text-align: center;
+}
+
+.stat-title {
+    color: #9aa8bd;
+    font-size: 13px;
+}
+
+.stat-value {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+/* CASE */
+
+.case {
+    background: rgba(18, 25, 39, 0.92);
+    border: 1px solid #34425b;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
+}
+
+.case-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.case-title {
+    font-size: 25px;
+    color: #f4c95d;
+}
+
+.difficulty {
+    padding: 7px 12px;
+    background: #203c32;
+    color: #62e6a5;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+/* STORY */
+
+.story {
+    background: #101827;
+    border-left: 4px solid #f4c95d;
+    padding: 18px;
+    border-radius: 10px;
+    line-height: 1.7;
+    color: #dbe3f0;
+    margin-bottom: 22px;
+}
+
+/* EVIDENCE */
+
+.section-title {
+    margin-bottom: 12px;
+    font-size: 20px;
+}
+
+.evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.evidence {
+    background: #151f30;
+    border: 1px solid #2d3a51;
+    border-radius: 13px;
+    padding: 15px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.evidence:hover {
+    transform: translateY(-3px);
+    border-color: #f4c95d;
+}
+
+.evidence-icon {
+    font-size: 28px;
+}
+
+.evidence-name {
+    font-weight: bold;
+    margin: 7px 0;
+}
+
+.evidence-text {
+    color: #aeb9ca;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.evidence.opened {
+    border-color: #62e6a5;
+}
+
+/* SUSPECTS */
+
+.suspects {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.suspect {
+    background: #151f30;
+    border: 2px solid #2d3a51;
+    border-radius: 15px;
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.suspect:hover {
+    border-color: #f4c95d;
+    transform: translateY(-3px);
+}
+
+.suspect-icon {
+    font-size: 50px;
+}
+
+.suspect-name {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.suspect-job {
+    color: #8f9caf;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* BUTTONS */
+
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+}
+
+button {
+    border: none;
+    border-radius: 11px;
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+.main-btn {
+    background: #f4c95d;
+    color: #161616;
+}
+
+.hint-btn {
+    background: #293a55;
+    color: white;
+}
+
+.next-btn {
+    background: #38c98a;
+    color: #07150f;
+    display: none;
+}
+
+/* MESSAGE */
+
+.message {
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 12px;
+    display: none;
+    line-height: 1.6;
+}
+
+.message.success {
+    display: block;
+    background: rgba(56,201,138,.13);
+    border: 1px solid #38c98a;
+    color: #8df2c5;
+}
+
+.message.error {
+    display: block;
+    background: rgba(255,80,80,.12);
+    border: 1px solid #ff5b5b;
+    color: #ffaaaa;
+}
+
+/* MODAL */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+}
+
+.modal-box {
+    width: min(500px, 100%);
+    background: #141d2d;
+    border: 1px solid #3c4b66;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+}
+
+.modal-icon {
+    font-size: 65px;
+}
+
+.modal h2 {
+    color: #f4c95d;
+    margin: 15px 0;
+}
+
+.modal p {
+    color: #b8c2d2;
+    line-height: 1.6;
+}
+
+.close-btn {
+    margin-top: 20px;
+    background: #f4c95d;
+    color: #111;
+}
+
+/* PROGRESS */
+
+.progress-wrap {
+    margin: 20px 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    color: #9aa8bd;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.progress {
+    height: 8px;
+    background: #273247;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 20%;
+    background: linear-gradient(90deg, #f4c95d, #ffdf85);
+    transition: .4s;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:700px) {
+
+    h1 {
+        font-size: 27px;
+    }
+
+    .topbar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .evidence-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .suspects {
+        grid-template-columns: 1fr;
+    }
+
+    .case {
+        padding: 17px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <div class="logo">🕵️</div>
+    <h1>MANTIQIY DETEKTIV</h1>
+    <p class="subtitle">
+        Dalillarni toping. Yolg‘onchini aniqlang. Sirni oching.
+    </p>
+</header>
+
+<div class="topbar">
+
+    <div class="stat">
+        <div class="stat-title">LEVEL</div>
+        <div class="stat-value" id="level">1 / 5</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">BALL</div>
+        <div class="stat-value" id="score">0</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">JON</div>
+        <div class="stat-value" id="lives">❤️❤️❤️</div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-title">VAQT</div>
+        <div class="stat-value" id="timer">60</div>
+    </div>
+
+</div>
+
+<div class="progress-wrap">
+
+    <div class="progress-info">
+        <span>Detektivlik darajasi</span>
+        <span id="progressText">1 / 5</span>
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+</div>
+
+<main class="case">
+
+    <div class="case-header">
+
+        <div class="case-title" id="caseTitle">
+            Case #1 — Muzeydagi sir
+        </div>
+
+        <div class="difficulty" id="difficulty">
+            OSON
+        </div>
+
+    </div>
+
+    <div class="story" id="story"></div>
+
+    <h3 class="section-title">🔍 Dalillar</h3>
+
+    <div class="evidence-grid" id="evidence"></div>
+
+    <h3 class="section-title" style="margin-top:25px;">
+        👤 Gumondorlar
+    </h3>
+
+    <div class="suspects" id="suspects"></div>
+
+    <div class="buttons">
+
+        <button class="hint-btn" onclick="useHint()">
+            💡 Hint
+        </button>
+
+        <button class="next-btn" id="nextBtn" onclick="nextLevel()">
+            Keyingi level →
+        </button>
+
+    </div>
+
+    <div class="message" id="message"></div>
+
+</main>
+
+</div>
+
+<!-- EVIDENCE MODAL -->
+
+<div class="modal" id="evidenceModal">
+
+    <div class="modal-box">
+
+        <div class="modal-icon">🔎</div>
+
+        <h2 id="modalTitle">Dalil</h2>
+
+        <p id="modalText"></p>
+
+        <button class="close-btn" onclick="closeEvidence()">
+            Tushundim
+        </button>
+
+    </div>
+
+</div>
+
+<!-- WIN MODAL -->
+
+<div class="modal" id="winModal">
+
+    <div class="modal-box">
+
+        <div class="modal-icon">🏆</div>
+
+        <h2>Tabriklaymiz!</h2>
+
+        <p>
+            Siz barcha ishlarni muvaffaqiyatli ochdingiz!
+            Siz haqiqiy Mantiqiy Detektivsiz.
+        </p>
+
+        <h2 id="finalScore"></h2>
+
+        <button class="close-btn" onclick="restartGame()">
+            Qaytadan o‘ynash
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+/* =========================================
+   O'YIN MA'LUMOTLARI
+========================================= */
+
+const cases = [
+
+{
+    title: "Case #1 — Muzeydagi sir",
+    difficulty: "OSON",
+    time: 60,
+
+    story: `
+    Kecha soat 20:00 da shahar muzeyidan juda qimmatli
+    olmos uzuk yo‘qoldi. O‘sha vaqtda muzeyda faqat
+    uch kishi bo‘lgan: Ali, Vali va Sardor.
+    Ularning har biri o‘zini oqlashga harakat qilmoqda.
+    Dalillarni tekshiring va jinoyatchini toping.
+    `,
+
+    evidence: [
+
+        {
+            icon: "📹",
+            name: "Kamera",
+            text: "Kamera yozuvida 19:55 da Ali muzeyning orqa eshigiga kirgani ko‘rinadi."
+        },
+
+        {
+            icon: "⏰",
+            name: "Soat",
+            text: "Uzuk 20:00 dan 20:05 gacha bo‘lgan vaqtda yo‘qolgan."
+        },
+
+        {
+            icon: "👣",
+            name: "Oyoq izi",
+            text: "Vitrina oldidagi oyoq izi Alining poyabzal o‘lchamiga mos keladi."
+        },
+
+        {
+            icon: "🔑",
+            name: "Kalit",
+            text: "Vitrina kaliti Alining cho‘ntagidan topilgan."
+        }
+
+    ],
+
+    suspects: [
+
+        {
+            icon: "👨",
+            name: "Ali",
+            job: "Qo‘riqchi",
+            correct: true
+        },
+
+        {
+            icon: "👨‍💼",
+            name: "Vali",
+            job: "Muzey xodimi",
+            correct: false
+        },
+
+        {
+            icon: "🧑",
+            name: "Sardor",
+            job: "Mehmon",
+            correct: false
+        }
+
+    ],
+
+    explanation:
+    "Ali aybdor. Kamera, oyoq izi va eng muhimi vitrina kaliti uning aybdor ekanini ko‘rsatmoqda."
+
+},
+
+{
+    title: "Case #2 — Yo‘qolgan telefon",
+    difficulty: "OSON",
+    time: 55,
+
+    story: `
+    Restoranda mashhur tadbirkorning telefoni yo‘qoldi.
+    Telefon soat 18:30 da stol ustida bo‘lgan.
+    18:35 da esa telefon yo‘q edi.
+    Uch kishi gumon ostida.
+    `,
+
+    evidence: [
+
+        {
+            icon: "📱",
+            name: "Telefon",
+            text: "Telefon oxirgi marta 18:32 da restoranning Wi-Fi tarmog‘iga ulangan."
+        },
+
+        {
+            icon: "📹",
+            name: "Kamera",
+            text: "18:31 da Vali stol yonida yolg‘iz qolgan."
+        },
+
+        {
+            icon: "🧥",
+            name: "Kiyim",
+            text: "Valining kurtkasi cho‘ntagidan telefon g‘ilofining bir qismi topildi."
+        },
+
+        {
+            icon: "🚪",
+            name: "Eshik",
+            text: "Sardor 18:25 da restorandan chiqib ketgan."
+        }
+
+    ],
+
+    suspects: [
+
+        {
+            icon: "👨",
+            name: "Ali",
+            job: "Ofitsiant",
+            correct: false
+        },
+
+        {
+            icon: "👨‍💼",
+            name: "Vali",
+            job: "Mehmon",
+            correct: true
+        },
+
+        {
+            icon: "🧑",
+            name: "Sardor",
+            job: "Mehmon",
+            correct: false
+        }
+
+    ],
+
+    explanation:
+    "Vali aybdor. Kamera uning telefon yo‘qolgan vaqtda stol yonida bo‘lganini ko‘rsatadi."
+},
+
+{
+    title: "Case #3 — Ofisdagi hujjat",
+    difficulty: "O‘RTA",
+    time: 50,
+
+    story: `
+    Kompaniyaning eng muhim maxfiy hujjati seyfdan
+    yo‘qoldi. Seyf 21:00 da qulflangan edi.
+    Uch xodimdan biri kalitga ega bo‘lgan.
+    `,
+
+    evidence: [
+
+        {
+            icon: "🔐",
+            name: "Seyf",
+            text: "Seyf faqat maxsus kalit bilan ochiladi."
+        },
+
+        {
+            icon: "🔑",
+            name: "Kalit",
+            text: "Maxsus kalit Malikaning stolida topildi."
+        },
+
+        {
+            icon: "📹",
+            name: "Kamera",
+            text: "Malika 20:55 da direktor xonasiga kirgan."
+        },
+
+        {
+            icon: "📝",
+            name: "Hujjat",
+            text: "Hujjat 20:58 da oxirgi marta seyf ichida ko‘rilgan."
+        }
+
+    ],
+
+    suspects: [
+
+        {
+            icon: "👩",
+            name: "Malika",
+            job: "Kotiba",
+            correct: true
+        },
+
+        {
+            icon: "👨",
+            name: "Akmal",
+            job: "Dasturchi",
+            correct: false
+        },
+
+        {
+            icon: "👨‍💼",
+            name: "Jasur",
+            job: "Menejer",
+            correct: false
+        }
+
+    ],
+
+    explanation:
+    "Malika eng kuchli gumondor. U direktor xonasiga hujjat yo‘qolishidan oldin kirgan va seyf kaliti ham uning stolida bo‘lgan."
+},
+
+{
+    title: "Case #4 — Mehmonxonadagi sir",
+    difficulty: "QIYIN",
+    time: 45,
+
+    story: `
+    Mehmonxonada qimmatbaho marjon yo‘qoldi.
+    Eshik buzilmagan. Demak, o‘g‘ri kalitdan
+    foydalangan bo‘lishi kerak.
+    `,
+
+    evidence: [
+
+        {
+            icon: "🔑",
+            name: "Kalit",
+            text: "Xona uchun ikkinchi kalit mehmonxona resepsiyasida bo‘lgan."
+        },
+
+        {
+            icon: "📹",
+            name: "Kamera",
+            text: "22:10 da Sardor resepsiya oldida turgan."
+        },
+
+        {
+            icon: "🛗",
+            name: "Lift",
+            text: "22:12 da Sardor 5-qavatga ko‘tarilgan."
+        },
+
+        {
+            icon: "💎",
+            name: "Marjon",
+            text: "Marjon 22:15 da yo‘qolgan deb aniqlangan."
+        }
+
+    ],
+
+    suspects: [
+
+        {
+            icon: "👨",
+            name: "Sardor",
+            job: "Mehmon",
+            correct: true
+        },
+
+        {
+            icon: "👩",
+            name: "Malika",
+            job: "Administrator",
+            correct: false
+        },
+
+        {
+            icon: "👨‍💼",
+            name: "Akmal",
+            job: "Mehmon",
+            correct: false
+        }
+
+    ],
+
+    explanation:
+    "Sardor resepsiya oldida bo‘lgan, keyin darhol 5-qavatga chiqqan. Marjon aynan shu vaqtda yo‘qolgan."
+},
+
+{
+    title: "Case #5 — Poyezddagi sir",
+    difficulty: "JUDAYAM QIYIN",
+    time: 40,
+
+    story: `
+    Tez yuruvchi poyezdda qimmatli hujjat yo‘qoldi.
+    Vagon ichida to‘rt kishi bor edi.
+    Poyezd 10 daqiqa davomida tunnel ichida bo‘lgan.
+    Aynan shu paytda hujjat yo‘qolgan.
+    `,
+
+    evidence: [
+
+        {
+            icon: "🚂",
+            name: "Poyezd",
+            text: "Poyezd 14:20 dan 14:30 gacha tunnel ichida bo‘lgan."
+        },
+
+        {
+            icon: "📱",
+            name: "Telefon",
+            text: "Alining telefoni 14:25 da internetga ulangan."
+        },
+
+        {
+            icon: "📷",
+            name: "Kamera",
+            text: "Vagon kamerasi 14:20–14:30 oralig‘ida ishlagan."
+        },
+
+        {
+            icon: "💼",
+            name: "Sumka",
+            text: "Hujjat topilganda Sardorning sumkasi yonida bo‘lgan."
+        }
+
+    ],
+
+    suspects: [
+
+        {
+            icon: "👨",
+            name: "Ali",
+            job: "Yo‘lovchi",
+            correct: false
+        },
+
+        {
+            icon: "👨‍💼",
+            name: "Vali",
+            job: "Biznesmen",
+            correct: false
+        },
+
+        {
+            icon: "🧑",
+            name: "Sardor",
+            job: "Yo‘lovchi",
+            correct: true
+        },
+
+        {
+            icon: "👨‍✈️",
+            name: "Jasur",
+            job: "Konduktor",
+            correct: false
+        }
+
+    ],
+
+    explanation:
+    "Sardorning sumkasi yonidan hujjat topildi. Boshqa dalillar esa qolgan gumondorlarni kuchsizlantiradi."
+}
+
+];
+
+
+/* =========================================
+   O'YIN HOLATI
+========================================= */
+
+let currentLevel = 0;
+let score = 0;
+let lives = 3;
+let timeLeft = 60;
+let timerInterval = null;
+let answered = false;
+let hintUsed = false;
+
+
+/* =========================================
+   ELEMENTLAR
+========================================= */
+
+const levelEl = document.getElementById("level");
+const scoreEl = document.getElementById("score");
+const livesEl = document.getElementById("lives");
+const timerEl = document.getElementById("timer");
+
+const caseTitleEl = document.getElementById("caseTitle");
+const difficultyEl = document.getElementById("difficulty");
+const storyEl = document.getElementById("story");
+const evidenceEl = document.getElementById("evidence");
+const suspectsEl = document.getElementById("suspects");
+
+const messageEl = document.getElementById("message");
+const nextBtn = document.getElementById("nextBtn");
+
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+
+const evidenceModal = document.getElementById("evidenceModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalText = document.getElementById("modalText");
+
+const winModal = document.getElementById("winModal");
+const finalScore = document.getElementById("finalScore");
+
+
+/* =========================================
+   LEVELNI YUKLASH
+========================================= */
+
+function loadLevel() {
+
+    clearInterval(timerInterval);
+
+    answered = false;
+    hintUsed = false;
+
+    const game = cases[currentLevel];
+
+    levelEl.textContent =
+        `${currentLevel + 1} / ${cases.length}`;
+
+    progressText.textContent =
+        `${currentLevel + 1} / ${cases.length}`;
+
+    progressBar.style.width =
+        `${((currentLevel + 1) / cases.length) * 100}%`;
+
+    caseTitleEl.textContent = game.title;
+
+    difficultyEl.textContent =
+        game.difficulty;
+
+    storyEl.innerHTML =
+        game.story;
+
+    messageEl.className = "message";
+    messageEl.innerHTML = "";
+
+    nextBtn.style.display = "none";
+
+    renderEvidence(game.evidence);
+    renderSuspects(game.suspects);
+
+    startTimer(game.time);
+
+    updateUI();
+}
+
+
+/* =========================================
+   DALILLARNI CHIQARISH
+========================================= */
+
+function renderEvidence(evidence) {
+
+    evidenceEl.innerHTML = "";
+
+    evidence.forEach((item, index) => {
+
+        const div = document.createElement("div");
+
+        div.className = "evidence";
+
+        div.innerHTML = `
+            <div class="evidence-icon">
+                ${item.icon}
+            </div>
+
+            <div class="evidence-name">
+                ${item.name}
+            </div>
+
+            <div class="evidence-text">
+                Dalilni ko‘rish uchun bosing.
+            </div>
+        `;
+
+        div.onclick = function() {
+
+            this.classList.add("opened");
+
+            modalTitle.textContent =
+                item.icon + " " + item.name;
+
+            modalText.textContent =
+                item.text;
+
+            evidenceModal.style.display = "flex";
+        };
+
+        evidenceEl.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================================
+   GUMONDORLARNI CHIQARISH
+========================================= */
+
+function renderSuspects(suspects) {
+
+    suspectsEl.innerHTML = "";
+
+    suspects.forEach((person, index) => {
+
+        const div = document.createElement("div");
+
+        div.className = "suspect";
+
+        div.innerHTML = `
+            <div class="suspect-icon">
+                ${person.icon}
+            </div>
+
+            <div class="suspect-name">
+                ${person.name}
+            </div>
+
+            <div class="suspect-job">
+                ${person.job}
+            </div>
+        `;
+
+        div.onclick = function() {
+            chooseSuspect(index);
+        };
+
+        suspectsEl.appendChild(div);
+
+    });
+
+}
+
+
+/* =========================================
+   GUMONDORNI TANLASH
+========================================= */
+
+function chooseSuspect(index) {
+
+    if (answered) return;
+
+    const game = cases[currentLevel];
+
+    const selected =
+        game.suspects[index];
+
+    if (selected.correct) {
+
+        answered = true;
+
+        clearInterval(timerInterval);
+
+        let bonus = timeLeft * 2;
+
+        if (!hintUsed) {
+            bonus += 30;
+        }
+
+        score += 100 + bonus;
+
+        messageEl.className =
+            "message success";
+
+        messageEl.innerHTML = `
+            <strong>🎉 To‘g‘ri javob!</strong><br><br>
+
+            Siz jinoyatchini topdingiz.
+            <br><br>
+
+            <strong>🔎 Tahlil:</strong>
+            ${game.explanation}
+
+            <br><br>
+
+            <strong>+${100 + bonus} ball</strong>
+        `;
+
+        nextBtn.style.display = "inline-block";
+
+        if (currentLevel === cases.length - 1) {
+            nextBtn.textContent =
+                "🏆 Natijani ko‘rish";
+        }
+
+        updateUI();
+
+    } else {
+
+        lives--;
+
+        messageEl.className =
+            "message error";
+
+        messageEl.innerHTML = `
+            ❌ Noto‘g‘ri tanlov!
+
+            <br><br>
+
+            Dalillarni yana bir marta tekshiring.
+        `;
+
+        updateUI();
+
+        if (lives <= 0) {
+
+            setTimeout(() => {
+
+                alert(
+                    "💀 Barcha jonlaringiz tugadi. Level qaytadan boshlanadi!"
+                );
+
+                lives = 3;
+                loadLevel();
+
+            }, 600);
+
+        }
+
+    }
+
+}
+
+
+/* =========================================
+   HINT
+========================================= */
+
+function useHint() {
+
+    if (answered) return;
+
+    if (hintUsed) {
+
+        alert("Bu levelda hint allaqachon ishlatilgan.");
+
+        return;
+    }
+
+    hintUsed = true;
+
+    score = Math.max(0, score - 20);
+
+    const game = cases[currentLevel];
+
+    const correctPerson =
+        game.suspects.find(
+            person => person.correct
+        );
+
+    messageEl.className =
+        "message success";
+
+    messageEl.innerHTML = `
+        💡 <strong>Hint:</strong><br>
+        ${correctPerson.name} bilan bog‘liq dalillarga
+        alohida e’tibor bering.
+    `;
+
+    updateUI();
+
+}
+
+
+/* =========================================
+   TIMER
+========================================= */
+
+function startTimer(seconds) {
+
+    timeLeft = seconds;
+
+    timerEl.textContent = timeLeft;
+
+    timerInterval = setInterval(() => {
+
+        timeLeft--;
+
+        timerEl.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+
+            clearInterval(timerInterval);
+
+            if (!answered) {
+
+                lives--;
+
+                messageEl.className =
+                    "message error";
+
+                messageEl.innerHTML = `
+                    ⏰ <strong>Vaqt tugadi!</strong><br><br>
+                    Sizda yana imkoniyat bor.
+                `;
+
+                updateUI();
+
+                if (lives <= 0) {
+
+                    setTimeout(() => {
+
+                        lives = 3;
+                        loadLevel();
+
+                    }, 1000);
+
+                } else {
+
+                    setTimeout(() => {
+                        loadLevel();
+                    }, 1200);
+
+                }
+
+            }
+
+        }
+
+    }, 1000);
+
+}
+
+
+/* =========================================
+   KEYINGI LEVEL
+========================================= */
+
+function nextLevel() {
+
+    if (currentLevel < cases.length - 1) {
+
+        currentLevel++;
+
+        loadLevel();
+
+    } else {
+
+        clearInterval(timerInterval);
+
+        finalScore.textContent =
+            `⭐ Yakuniy ball: ${score}`;
+
+        winModal.style.display = "flex";
+
+    }
+
+}
+
+
+/* =========================================
+   QAYTADAN BOSHLASH
+========================================= */
+
+function restartGame() {
+
+    currentLevel = 0;
+    score = 0;
+    lives = 3;
+
+    winModal.style.display = "none";
+
+    loadLevel();
+
+}
+
+
+/* =========================================
+   DALIL MODALINI YOPISH
+========================================= */
+
+function closeEvidence() {
+
+    evidenceModal.style.display = "none";
+
+}
+
+
+/* =========================================
+   UI YANGILASH
+========================================= */
+
+function updateUI() {
+
+    scoreEl.textContent = score;
+
+    let hearts = "";
+
+    for (let i = 0; i < lives; i++) {
+        hearts += "❤️";
+    }
+
+    for (let i = lives; i < 3; i++) {
+        hearts += "🖤";
+    }
+
+    livesEl.textContent = hearts;
+
+}
+
+
+/* =========================================
+   MODALNI TASHQARISIGA BOSGANDA YOPISH
+========================================= */
+
+window.onclick = function(event) {
+
+    if (event.target === evidenceModal) {
+        evidenceModal.style.display = "none";
+    }
+
+};
+
+
+/* =========================================
+   O'YINNI BOSHLASH
+========================================= */
+
+loadLevel();
+
+</script>
+
+</body>
+</html>
